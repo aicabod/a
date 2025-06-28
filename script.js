@@ -144,18 +144,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     sortedVoices.forEach((voice) => {
-      const option = new Option(voice.name, voice.name);
+      const option = new Option(voice.name, voice.voiceURI);
       ui.voiceSelector.add(option);
     });
 
     const currentVoiceExists =
-        sortedVoices.some((voice) => voice.name === currentVoice);
+        currentVoice &&
+        sortedVoices.some((voice) => voice.voiceURI === currentVoice);
     if (currentVoiceExists) {
       ui.voiceSelector.value = currentVoice;
     } else {
       const defaultVoice = sortedVoices.find((voice) => voice.default);
       ui.voiceSelector.value =
-          defaultVoice ? defaultVoice.name : sortedVoices[0].name;
+          defaultVoice ? defaultVoice.voiceURI : sortedVoices[0].voiceURI;
     }
   }
 
@@ -247,7 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const utterance =
         new SpeechSynthesisUtterance(numberToSpeak.toString());
     const selectedVoice =
-        state.allVoices.find((voice) => voice.name === ui.voiceSelector.value);
+        state.allVoices.find((voice) =>
+          voice.voiceURI === ui.voiceSelector.value);
     if (selectedVoice) {
       utterance.voice = selectedVoice;
       utterance.lang = selectedVoice.lang;
