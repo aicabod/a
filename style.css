@@ -143,12 +143,12 @@ input[inputmode="decimal"] {
 }
 
 .control-row select {
-    width: 250px;
+    width: 240px;
 }
 
 input[type="range"] {
     margin: 10px;
-    width: 150px;
+    width: 120px;
     margin-left: 100px;
 }
 
