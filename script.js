@@ -250,8 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
         state.allVoices.find((voice) => voice.name === ui.voiceSelector.value);
     if (selectedVoice) {
       utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
     }
-    utterance.lang = ui.languageSelector.value;
     utterance.rate = parseFloat(ui.speechRateInput.value);
 
     const suffix = getOrdinalSuffix(state.currentNumberIndex);
