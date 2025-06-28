@@ -78,12 +78,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  function getLangTagPrefix(langTag) {
+    const separatorIndex = langTag.search(/[_\\-]/);
+    if (separatorIndex > 0) {
+      return langTag.substring(0, separatorIndex);
+    }
+    return langTag;
+  }
+
   function loadLanguages() {
     state.allVoices = speechSynthesis.getVoices();
     const uniqueLanguages = new Set();
     state.allVoices.forEach((voice) => {
       const langTag = voice.lang;
-      const langTagPrefix = langTag.substring(0, 2);
+      const langTagPrefix = getLangTagPrefix(langTag);
       if (config.LANGUAGE_NAMES[langTagPrefix]) {
         uniqueLanguages.add(config.LANGUAGE_NAMES[langTagPrefix]);
       } else {
@@ -119,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filteredVoices =
         state.allVoices.filter((voice) => {
           const langTag = voice.lang;
-          const langTagPrefix = langTag.substring(0, 2);
+          const langTagPrefix = getLangTagPrefix(langTag);
           if (config.LANGUAGE_NAMES[langTagPrefix]) {
             return config.LANGUAGE_NAMES[langTagPrefix] === selectedLang;
           }
