@@ -1,0 +1,164 @@
+:root {
+    --bg-color: #f0f0f0;
+    --primary-color: #4285F4;
+    --primary-hover-color: #3367d6;
+    --text-color-dark: #333;
+    --text-color-light: #555;
+    --correct-color: #28a745;
+    --incorrect-color: #dc3545;
+    --surface-color: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-color: #ccc;
+    --font-family: sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    gap: 20px;
+    background-color: var(--bg-color);
+    font-family: var(--font-family);
+    color: var(--text-color-dark);
+}
+
+.main-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-button {
+    cursor: pointer;
+    padding: 20px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--surface-color);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-button:hover {
+    transform: scale(1.05);
+}
+
+.icon-button .material-icons {
+    font-size: 48px;
+    color: var(--text-color-light);
+}
+
+#playPauseButton .material-icons {
+    color: var(--primary-color);
+}
+
+.correct-numbers, .message-display {
+    font-size: 1.0em;
+    font-weight: bold;
+    min-height: 1.5em;
+    width: 80%
+    max-width: 800px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.correct-numbers {
+    color: var(--correct-color);
+    margin-top: 10px;
+    visibility: hidden;
+}
+
+.message-general { color: var(--text-color-dark); }
+.message-correct { color: var(--correct-color); }
+.message-incorrect { color: var(--incorrect-color); }
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+.input-group input[type="text"] {
+    flex-grow: 1;
+}
+
+input[type="text"], select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+input[inputmode="decimal"] {
+    text-align: right;
+}
+
+.button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    max-width: 450px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.control-row label {
+    margin-right: 10px;
+}
+
+.control-row input {
+    width: 200px;
+}
+
+.control-row select {
+    width: 250px;
+}
+
+input[type="range"] {
+    margin: 10px;
+    width: 150px;
+    margin-left: 120px;
+}
+
+.slider-value {
+    width: 40px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+[disabled], .disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}

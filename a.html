@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="main-controls" role="group" aria-label="Main Controls">
+        <button id="refreshButton" class="icon-button" aria-label="Regenerate numbers">
+            <span class="material-icons">refresh</span>
+        </button>
+        <button id="playPauseButton" class="icon-button" aria-label="Speak (or stop speaking) numbers">
+            <span class="material-icons">play_arrow</span>
+        </button>
+        <button id="toggleVisibilityButton" class="icon-button" aria-label="Toggle answer visibility">
+            <span class="material-icons">visibility</span>
+        </button>
+    </div>
+
+    <div id="correctNumbersDisplay" class="correct-numbers" aria-live="polite"></div>
+
+    <div class="input-group">
+        <input type="text" id="userInput" placeholder="Enter the numbers in space-separated format (e.g. 123 45 6789)">
+        <button type="button" id="checkButton" class="button">Check</button>
+    </div>
+
+    <div id="messageDisplay" class="message-display" aria-live="assertive"></div>
+
+    <form class="settings-form">
+        <div class="control-row">
+            <label for="minNumber">Minimum value:</label>
+            <input type="text" inputmode="decimal" id="minNumber" value="0">
+        </div>
+        <div class="control-row">
+            <label for="maxNumber">Maximum value:</label>
+            <input type="text" inputmode="decimal" id="maxNumber" value="1000000">
+        </div>
+        <div class="control-row">
+            <label for="numCount">Numbers to generate:</label>
+            <input type="text" inputmode="decimal" id="numCount" value="3">
+        </div>
+        <div class="control-row">
+            <label for="languageSelector">Language:</label>
+            <select id="languageSelector"></select>
+        </div>
+        <div class="control-row">
+            <label for="voiceSelector">Voice:</label>
+            <select id="voiceSelector"></select>
+        </div>
+        <div class="control-row">
+            <label for="speechRate">Speed:</label>
+            <input type="range" id="speechRate" min="0.25" max="4.0" step="0.25" value="1.0">
+            <span id="speechRateValue" class="slider-value">1.00</span>
+        </div>
+        <div class="control-row">
+            <label for="intervalMs">Interval (ms):</label>
+            <input type="text" inputmode="decimal" id="intervalMs" value="1000">
+        </div>
+    </form>
+</body>
+</html>
