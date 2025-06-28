@@ -1,5 +1,5 @@
-a
-=
+a: Garbage toy to play with Speech Synthesis API
+================================================
 
 Inspired by [NUMERIZER](https://www.numerizer.pro/).
 

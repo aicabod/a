@@ -149,7 +149,7 @@ input[inputmode="decimal"] {
 input[type="range"] {
     margin: 10px;
     width: 150px;
-    margin-left: 120px;
+    margin-left: 100px;
 }
 
 .slider-value {

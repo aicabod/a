@@ -1,12 +1,17 @@
 const config = {
   DEFAULT_LANGUAGE: 'en-GB',
   LANGUAGE_NAMES: {
-    'de-DE': 'German (Deutsch)', 'en-GB': 'English (UK)',
-    'en-US': 'English (US)', 'es-ES': 'Spanish (Español)',
-    'fr-FR': 'French (Français)', 'in-ID': 'Indonesian (Bahasa Indonesia)',
-    'it-IT': 'Italian (Italiano)', 'ja-JP': 'Japanese (日本語)',
-    'ko-KR': 'Korean (한국어)', 'ru-RU': 'Russian (Русский)',
-    'tr-TR': 'Turkish (Türkçe)', 'zh-CN': 'Chinese (中文)',
+    'de': 'German', 'de-DE': 'German (Deutsch)',
+    'en': 'English', 'en-GB': 'English (UK)', 'en-US': 'English (US)',
+    'es': 'Spanish', 'es-ES': 'Spanish (español)',
+    'fr': 'French', 'fr-FR': 'French (français)',
+    'id': 'Indonesian', 'in-ID': 'Indonesian (Bahasa Indonesia)',
+    'it': 'Italian', 'it-IT': 'Italian (italiano)',
+    'ja': 'Japanese', 'ja-JP': 'Japanese (日本語)',
+    'ko': 'Korean', 'ko-KR': 'Korean (한국어)',
+    'ru': 'Russian', 'ru-RU': 'Russian (pусский)',
+    'tr': 'Turkish', 'tr-TR': 'Turkish (Türkçe)',
+    'zh': 'Chinese', 'zh-CN': 'Chinese (中文)',
   },
   MAX_INTERVAL_MS: 5000,
   MAX_NUM_COUNT: 10,
@@ -297,20 +302,20 @@ function addEventListeners() {
       case 'r':
         if (e.preventDefault) {
           e.preventDefault();
-          handleRefresh();
         }
+        handleRefresh();
         break;
       case 'p':
         if (e.preventDefault) {
           e.preventDefault();
-          handlePlayPause();
         }
+        handlePlayPause();
         break;
       case 'v':
         if (e.preventDefault) {
           e.preventDefault();
-          handleToggleVisibility();
         }
+        handleToggleVisibility();
         break;
     }
   };
