@@ -1,6 +1,11 @@
+// AI suggested doing everything in this callback, and I followed it because I
+// know nothing about javascript.
 document.addEventListener('DOMContentLoaded', () => {
+  // Constants. Not sure if `config` is really an appropriate name.
   const config = {
+    // Default language to initially set (if available).
     DEFAULT_LANGUAGE: 'English',
+    // Map from language tag prefixes to language names (not exhaustive).
     LANGUAGE_NAMES: {
       'de': 'German (Deutsch)',
       'en': 'English',
@@ -15,23 +20,24 @@ document.addEventListener('DOMContentLoaded', () => {
       'tr': 'Turkish (Türkçe)',
       'zh': 'Chinese (中文)',
     },
+    // Maximum interval between speeches in milliseconds.
     MAX_INTERVAL_MS: 5000,
+    // Maximum number of numbers to generate at once.
     MAX_NUM_COUNT: 10,
   };
 
+  // Super messy list of UI elements.
   const ui = {
+    refreshButton: document.getElementById('refreshButton'),
     playPauseButton: document.getElementById('playPauseButton'),
     playPauseIcon:
         document.getElementById('playPauseButton')
             .querySelector('.material-icons'),
-    refreshButton: document.getElementById('refreshButton'),
     toggleVisibilityButton:
         document.getElementById('toggleVisibilityButton'),
     toggleVisibilityIcon:
         document.getElementById('toggleVisibilityButton')
             .querySelector('.material-icons'),
-    languageSelector: document.getElementById('languageSelector'),
-    voiceSelector: document.getElementById('voiceSelector'),
     correctNumbersDisplay: document.getElementById('correctNumbersDisplay'),
     userInput: document.getElementById('userInput'),
     checkButton: document.getElementById('checkButton'),
@@ -39,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     minNumberInput: document.getElementById('minNumber'),
     maxNumberInput: document.getElementById('maxNumber'),
     numCountInput: document.getElementById('numCount'),
+    languageSelector: document.getElementById('languageSelector'),
+    voiceSelector: document.getElementById('voiceSelector'),
     speechRateInput: document.getElementById('speechRate'),
     speechRateValueDisplay: document.getElementById('speechRateValue'),
     intervalMsInput: document.getElementById('intervalMs'),
@@ -52,10 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const state = {
+    // Whether a speech is in progress.
     isSpeaking: false,
+    // List of available voices. Obtained by speechSynthesis.getVoices().
     allVoices: [],
+    // Current list of numbers to speak.
     numbersToSpeak: [],
+    // Which number in the above list should be spoken next.
     currentNumberIndex: 0,
+    // ID of the last message dislayed in messageDisplay.
     messageId: 0,
   };
 
@@ -72,13 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.formElements.forEach((elem) => elem.disabled = true);
   }
 
+  // Disable everything and return early if the Web Speech API is not available.
   if (!('speechSynthesis' in window)) {
     console.warn('Web Speech API is not supported in this browser.');
     disableAppFeatures();
     return;
   }
 
+  // Extracts the prefix part of an IETF language tag.
   function getLangTagPrefix(langTag) {
+    // Assume that the prefixed is followed by either '_' or '-' (e.g. "en-GB",
+    // "ja-JP"), or the whole tag should be treated as the prefix (e.g. "ko").
     const separatorIndex = langTag.search(/[_\\-]/);
     if (separatorIndex > 0) {
       return langTag.substring(0, separatorIndex);
@@ -86,81 +103,107 @@ document.addEventListener('DOMContentLoaded', () => {
     return langTag;
   }
 
+  // Returns the language name corresponding to the given language tag.
+  // `prefixMap` is a map (an object literal) from language tag prefixes to
+  // language names. If the map contains the prefix of the language tag, its
+  // corresponding language name is returned. Otherwise, the language tag is
+  // returned as-is.
+  function getLanguageName(langTag, prefixMap) {
+    return prefixMap[getLangTagPrefix(langTag)] || langTag;
+  }
+
+  // Returns the list of languages available in the given set of voices.
+  // The list is alphabetically sorted using the default sort() method.
+  function getLanguages(voices, prefixMap) {
+    const uniqueLanguages = new Set();
+    voices.forEach((voice) => {
+      uniqueLanguages.add(getLanguageName(voice.lang, prefixMap));
+    });
+    return Array.from(uniqueLanguages).sort();
+  }
+
+  // Loads the available voices and accordingly updates languageSelector and
+  // voiceSelector.
   function loadLanguages() {
     state.allVoices = speechSynthesis.getVoices();
-    const uniqueLanguages = new Set();
-    state.allVoices.forEach((voice) => {
-      const langTag = voice.lang;
-      const langTagPrefix = getLangTagPrefix(langTag);
-      if (config.LANGUAGE_NAMES[langTagPrefix]) {
-        uniqueLanguages.add(config.LANGUAGE_NAMES[langTagPrefix]);
-      } else {
-        uniqueLanguages.add(langTag);
-      }
-    });
-    const sortedLanguages = Array.from(uniqueLanguages).sort();
+    const languages = getLanguages(state.allVoices, config.LANGUAGE_NAMES);
 
+    // Update languageSelector after memorizing the current language.
     const currentLang = ui.languageSelector.value;
     ui.languageSelector.innerHTML = '';
-    sortedLanguages.forEach((lang) => {
+    languages.forEach((lang) => {
       const option = new Option(lang, lang);
       ui.languageSelector.add(option);
     });
 
+    // Keep selecting the current language if it is still available.
     const currentLangExists =
-        sortedLanguages.some((lang) => lang === currentLang);
+        currentLang && languages.some((lang) => lang === currentLang);
     if (currentLangExists) {
       ui.languageSelector.value = currentLang;
     } else {
+      // Select the default language if available. Otherwise, pick the first
+      // language in the list (unless the list is empty).
       const defaultLangExists =
-          sortedLanguages.some((lang) => lang === config.DEFAULT_LANGUAGE);
+          languages.some((lang) => lang === config.DEFAULT_LANGUAGE);
       ui.languageSelector.value =
-          defaultLangExists ?
-              config.DEFAULT_LANGUAGE : (sortedLanguages[0] || '');
+          defaultLangExists ? config.DEFAULT_LANGUAGE : (languages[0] || '');
     }
 
+    // Update voiceSelector as well.
     updateVoiceList();
   }
 
-  function updateVoiceList() {
-    const selectedLang = ui.languageSelector.value;
+  // Returns the list of voices of the specified language.
+  // The list is sorted using the localeCompare() method.
+  function filterVoices(voices, language, prefixMap) {
     const filteredVoices =
-        state.allVoices.filter((voice) => {
-          const langTag = voice.lang;
-          const langTagPrefix = getLangTagPrefix(langTag);
-          if (config.LANGUAGE_NAMES[langTagPrefix]) {
-            return config.LANGUAGE_NAMES[langTagPrefix] === selectedLang;
-          }
-          return langTag === selectedLang;
+        voices.filter((voice) => {
+          return language === getLanguageName(voice.lang, prefixMap);
         });
-    const sortedVoices =
-        filteredVoices.sort((a, b) => a.name.localeCompare(b.name));
+    return filteredVoices.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
+  // Fills voiceSelector with all available voices of the currently selected
+  // language.
+  function updateVoiceList() {
+    const selectedLanguage = ui.languageSelector.value;
+    const filteredVoices =
+      filterVoices(state.allVoices, selectedLanguage, config.LANGUAGE_NAMES);
+
+    // Update voiceSelector after memorizing the current voice.
     const currentVoice = ui.voiceSelector.value;
     ui.voiceSelector.innerHTML = '';
-    if (sortedVoices.length === 0) {
-      ui.voiceSelector.add(
-          new Option('No available voices found.', '', false, true));
-      return;
-    }
-    sortedVoices.forEach((voice) => {
+    filteredVoices.forEach((voice) => {
       const option = new Option(voice.name, voice.voiceURI);
       ui.voiceSelector.add(option);
     });
 
+    // Keep selecting the current voice if it is still available.
     const currentVoiceExists =
         currentVoice &&
-        sortedVoices.some((voice) => voice.voiceURI === currentVoice);
+        filteredVoices.some((voice) => voice.voiceURI === currentVoice);
     if (currentVoiceExists) {
       ui.voiceSelector.value = currentVoice;
+      return;
+    }
+
+    // Select a predefined default voice if exists. Otherwise, pick the first
+    // voice in the list (unless the list is empty).
+    const defaultVoice = filteredVoices.find((voice) => voice.default);
+    if (defaultVoice) {
+      ui.voiceSelector.value = defaultVoice.voiceURI;
+    } else if (filteredVoices.length > 0) {
+      ui.voiceSelector.value = filteredVoices[0].voiceURI || '';
     } else {
-      const defaultVoice = sortedVoices.find((voice) => voice.default);
-      ui.voiceSelector.value =
-          defaultVoice ? defaultVoice.voiceURI : sortedVoices[0].voiceURI;
+      ui.voiceSelector.value = '';
     }
   }
 
+  /* Some random garbage code follows. */
+
   function parseFormattedNumber(str) {
+    // Accept comma-separated numbers (e.g. treat "123,456" as 123456).
     return parseInt(str.replace(/,/g, ''), 10);
   }
 
