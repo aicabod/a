@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Extracts the prefix part of an IETF language tag.
   function getLangTagPrefix(langTag) {
-    // Assume that the prefixed is followed by either '_' or '-' (e.g. "en-GB",
+    // Assume that the prefix is followed by either '_' or '-' (e.g. "en-GB",
     // "ja-JP"), or the whole tag should be treated as the prefix (e.g. "ko").
     const separatorIndex = langTag.search(/[_\\-]/);
     if (separatorIndex > 0) {
@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Keep selecting the current voice if it is still available.
+    // Note that voiceURI (not name) is used as the identifier.
     const currentVoiceExists =
         currentVoice &&
         filteredVoices.some((voice) => voice.voiceURI === currentVoice);
@@ -359,6 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addEventListeners() {
+    // Do not forget to update languages/voices on voiceschanged events.
+    // This is especially important in environments where the voices are lazily
+    // loaded and speechSynthesis.getVoices() initially returns an empty list.
     speechSynthesis.onvoiceschanged = loadLanguages;
 
     ui.refreshButton.addEventListener('click', handleRefresh);
