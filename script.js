@@ -132,8 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentLang = ui.languageSelector.value;
     ui.languageSelector.innerHTML = '';
     languages.forEach((lang) => {
-      const option = new Option(lang, lang);
-      ui.languageSelector.add(option);
+      ui.languageSelector.add(new Option(lang, lang));
     });
 
     // Keep selecting the current language if it is still available.
@@ -159,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterVoices(voices, language, prefixMap) {
     const filteredVoices =
         voices.filter((voice) => {
-          return language === getLanguageName(voice.lang, prefixMap);
+          return getLanguageName(voice.lang, prefixMap) === language;
         });
     return filteredVoices.sort((a, b) => a.name.localeCompare(b.name));
   }
@@ -175,8 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentVoice = ui.voiceSelector.value;
     ui.voiceSelector.innerHTML = '';
     filteredVoices.forEach((voice) => {
-      const option = new Option(voice.name, voice.voiceURI);
-      ui.voiceSelector.add(option);
+      ui.voiceSelector.add(new Option(voice.name, voice.voiceURI));
     });
 
     // Keep selecting the current voice if it is still available.
@@ -209,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function parseAndValidateFormattedNumber(str, min, max) {
+    // Note that min >= 0 is assumed.
     const val = parseFormattedNumber(str) || min;
     return Math.max(min, Math.min(val, max));
   }
