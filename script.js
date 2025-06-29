@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = {
     // Whether a speech is in progress.
     isSpeaking: false,
-    // List of available voices. Obtained by speechSynthesis.getVoices().
+    // List of available voices obtained by speechSynthesis.getVoices().
     allVoices: [],
     // Current list of numbers to speak.
     numbersToSpeak: [],
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Extracts the prefix part of an IETF language tag.
   function getLangTagPrefix(langTag) {
-    // Assume that the prefix is followed by either '_' or '-' (e.g. "en-GB",
+    // Assume that the prefix is followed by either '_' or '-' (e.g. "en_GB",
     // "ja-JP"), or the whole tag should be treated as the prefix (e.g. "ko").
     const separatorIndex = langTag.search(/[_\\-]/);
     if (separatorIndex > 0) {
